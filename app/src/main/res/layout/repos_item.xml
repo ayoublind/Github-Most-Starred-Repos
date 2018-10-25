@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/txtname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="[Repo Name]"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/txtdesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtname"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:text="[Repo description ..]"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtdesc">
+
+                <ImageView
+                    android:id="@+id/ownerimage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="4dp"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/txtowner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:padding="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:text="[Repo owner name]"
+                    />
+
+                <ImageView
+                    android:id="@+id/startsimage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="4dp"
+                    android:src="@android:drawable/btn_star_big_on"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/numberstarts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center"
+                    android:text="[number of starts]"
+                    android:layout_weight="3"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
