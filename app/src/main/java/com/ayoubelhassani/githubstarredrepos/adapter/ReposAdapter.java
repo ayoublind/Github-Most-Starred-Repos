@@ -10,75 +10,80 @@ import android.widget.TextView;
 
 import com.ayoubelhassani.githubstarredrepos.R;
 import com.ayoubelhassani.githubstarredrepos.model.Repository;
+import com.bumptech.glide.Glide;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Ayoub on 10/25/2018.
  */
 
-public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ReposViewHolder> {
+public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> {
 
-    //this context will use to inflate the layout
-    private Context mCtx;
+    private ArrayList<Repository> itemsData;
+    private Context context;
 
-    //i'm gonna store all the repos in a list
-    private List<Repository> repositoryList;
-
-    //getting the context and repository list with constructor
-    public ReposAdapter(Context mCtx, List<Repository> repositoryList) {
-        this.mCtx = mCtx;
-        this.repositoryList = repositoryList;
+    public ReposAdapter(ArrayList<Repository> itemsData, Context ctx) {
+        this.itemsData = itemsData;
+        this.context = ctx;
     }
 
+    // Create new views (invoked by the layout manager)
     @Override
-    public ReposViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //inflating and returning our view holder
-        LayoutInflater inflater = LayoutInflater.from(mCtx);
-        View view = inflater.inflate(R.layout.repos_item, null);
+    public ReposAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View itemLayoutView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.repos_item, null);
 
-        //retourning the view holder for this item repos
-        return new ReposViewHolder(view);
+        // create ViewHolder
+
+        ViewHolder viewHolder = new ViewHolder(itemLayoutView);
+        return viewHolder;
     }
 
+    // Replace the contents of a view
     @Override
-    public void onBindViewHolder(ReposViewHolder holder, int position) {
-        //getting the repository of the specified position
-        Repository r = repositoryList.get(position);
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        //binding the data with the viewholder views
-        holder.txtname.setText(r.getName());
-        holder.txtdesc.setText(r.getDesc());
-        holder.txtowner.setText(r.getOwner());
-        holder.numberstarts.setText(String.valueOf(r.getRaiting()));
+        // - get data from the itemsData at this position
+        // - replace the contents of the view with that itemsData
+        Repository r = itemsData.get(position);
+        viewHolder.txtname.setText(r.getName());
+        viewHolder.txtowner.setText(r.getOwner());
+        viewHolder.txtdesc.setText(r.getDesc());
+        viewHolder.numberstart.setText(""+r.getRaiting());
 
-        //holder.ownerimage.setImageDrawable(mCtx.getResources().getDrawable(r.getImageOwner()));
+        // -- local test --
+        //viewHolder.imgOwner.setImageResource(itemsData[position].getImageOwner());
+        //viewHolder.imgOwner.setImageResource(R.drawable.ic_dashboard_black_24dp);
+
+        // -- test using glide --
+        Glide.with(context)
+                .load("https://avatars2.githubusercontent.com/u/5294331?v=4")
+                .into(viewHolder.imgOwner);
 
     }
 
+    // inner class to hold a reference to each item of RecyclerView
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        public TextView txtname, txtowner, txtdesc, numberstart;
+        public ImageView imgOwner;
+
+        public ViewHolder(View itemLayoutView) {
+            super(itemLayoutView);
+            txtname = (TextView) itemLayoutView.findViewById(R.id.txtname);
+            txtowner = (TextView) itemLayoutView.findViewById(R.id.txtowner);
+            txtdesc = (TextView) itemLayoutView.findViewById(R.id.txtdesc);
+            numberstart = (TextView) itemLayoutView.findViewById(R.id.numberstarts);
+            imgOwner = (ImageView) itemLayoutView.findViewById(R.id.ownerimage);
+        }
+    }
+
+
+    // Return the size of your itemsData
     @Override
     public int getItemCount() {
-        return repositoryList.size();
-    }
-
-
-    class ReposViewHolder extends RecyclerView.ViewHolder {
-
-        TextView txtname, txtdesc, txtowner, numberstarts;
-        ImageView ownerimage, startsimage;
-
-        public ReposViewHolder(View itemView) {
-            super(itemView);
-            //getting the item var from the view
-            txtname = itemView.findViewById(R.id.txtname);
-            txtdesc = itemView.findViewById(R.id.txtdesc);
-            txtowner = itemView.findViewById(R.id.txtowner);
-            numberstarts = itemView.findViewById(R.id.numberstarts);
-            ownerimage = itemView.findViewById(R.id.ownerimage);
-
-            //will not used but ..
-            startsimage = itemView.findViewById(R.id.startsimage);
-        }
+        return itemsData.size();
     }
 }
