@@ -11,4 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!--- i's gonna use the progress bar until fetching the data into recycler -->
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
 </RelativeLayout>

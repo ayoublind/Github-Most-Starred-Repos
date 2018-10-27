@@ -9,6 +9,11 @@ public class Repository {
     private double raiting;
     private String imageOwner;
 
+    //constructors
+    public Repository(){
+       super();
+    }
+
     public Repository(String name, String owner, String desc, double raiting) {
         this.name = name;
         this.owner = owner;
