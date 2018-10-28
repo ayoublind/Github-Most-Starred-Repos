@@ -41,7 +41,7 @@ public class TrendingFragment extends Fragment {
     ReposAdapter adapter;
 
     //the URL having the json data for repositories static but we can specified some args into the settings part
-    private static final String JSON_URL = "https://api.github.com/search/repositories?q=tetris+language:assembly&sort=stars&order=desc+json";
+    private static final String JSON_URL = "https://api.github.com/search/repositories?q=created:>2017-10-22&sort=stars&order=desc";
 
 
     @Nullable
@@ -57,7 +57,7 @@ public class TrendingFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         repositoryList = new ArrayList<>();
 
-        /*/ this is data fro recycler view -- local test(static)
+        /* this is data fro recycler view -- local test(static)
         repositoryList.add(new Repository("name 1","owner 1","desc ",2.4));
         repositoryList.add(new Repository("name 2","owner 2","desc ",4.4));
         repositoryList.add(new Repository("name 3","owner 3","desc ",5.0));
@@ -78,66 +78,71 @@ public class TrendingFragment extends Fragment {
         //making the progressbar visible
         progressBar.setVisibility(View.VISIBLE);
 
+        //the max number of pages in the given URL is 34
+        int maxPageJSON = 34;
+        //so we gonna repeat this work for a 34 iteration to get all data
+        for(int currentPage = 1 ; currentPage <= maxPageJSON; currentPage++) {
+            //creating a string request to send request to the url
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, JSON_URL + "&page=" + currentPage, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray items = (JSONArray) response.get("items");
+                                //now looping through all the elements of the json array
+                                for (int i = 0; i < items.length(); i++) {
+                                    //getting the json object of the particular index inside the array
+                                    JSONObject repoObject = items.getJSONObject(i);
 
-        //creating a string request to send request to the url
-        JsonObjectRequest jsonObjectRequest  = new JsonObjectRequest(Request.Method.GET, JSON_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray items = (JSONArray) response.get("items");
-                            //now looping through all the elements of the json array
-                            for (int i = 0; i < items.length(); i++) {
-                                //getting the json object of the particular index inside the array
-                                JSONObject repoObject = items.getJSONObject(i);
+                                    //creating a repo object and giving them the values from json object
+                                    Repository repos = new Repository();
 
-                                //creating a repo object and giving them the values from json object
-                                Repository repos = new Repository();
+                                    repos.setName(repoObject.getString("name"));
+                                    repos.setDesc(repoObject.getString("description"));
+                                    repos.setRaiting(repoObject.getDouble("score"));
 
-                                repos.setName(repoObject.getString("name"));
-                                repos.setDesc(repoObject.getString("description"));
-                                repos.setRaiting(repoObject.getDouble("score"));
+                                    //owner information - json object
+                                    JSONObject owner = repoObject.getJSONObject("owner");
 
-                                //owner information - json object
-                                JSONObject owner = repoObject.getJSONObject("owner");
+                                    repos.setImageOwner(owner.getString("avatar_url"));
+                                    repos.setOwner(owner.getString("login"));
 
-                                repos.setImageOwner(owner.getString("avatar_url"));
-                                repos.setOwner(owner.getString("login"));
+                                    //adding the repos to list of repositories
+                                    repositoryList.add(repos);
+                                }
 
-                                //adding the repos to list of repositories
-                                repositoryList.add(repos);
+                                //creating custom adapter object
+                                adapter = new ReposAdapter(repositoryList, getContext());
+
+                                //adding the adapter to listview
+                                recyclerView.setAdapter(adapter);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                            //creating custom adapter object
-                            adapter = new ReposAdapter(repositoryList, getContext());
-
-                            //adding the adapter to listview
-                            recyclerView.setAdapter(adapter);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                        adapter.notifyDataSetChanged();
-                        //hiding the progressbar after completion
-                        progressBar.setVisibility(View.INVISIBLE);
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //displaying the error in toast if occurrs
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            System.out.print(error);
+                            //hiding the progressbar if there is an error
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurrs
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        System.out.print(error);
-                        //hiding the progressbar if there is an error
-                        progressBar.setVisibility(View.INVISIBLE);
-                    }
-                });
+            );
+            adapter.notifyDataSetChanged();
+            //hiding the progressbar after completion
+            progressBar.setVisibility(View.INVISIBLE);
 
-        //creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+            //creating a request queue
+            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
-        //adding the jsonArray request to request queue
-        requestQueue.add(jsonObjectRequest);
+            //adding the jsonArray request to request queue
+            requestQueue.add(jsonObjectRequest);
+        }
 
 
         //return the view used

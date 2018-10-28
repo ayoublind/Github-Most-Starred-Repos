@@ -59,7 +59,7 @@ public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> 
 
         // -- test using glide --
         Glide.with(context)
-                .load("https://avatars2.githubusercontent.com/u/5294331?v=4")
+                .load(r.getImageOwner())
                 .into(viewHolder.imgOwner);
 
     }
